@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block vocabulaeysettingsform %}
+<form action="/vocabularysettings/" methods="post">
+    <div class="form-group">
+        <label>词汇类别:</label>
+        <select class="form-control" id="selectcategory">
+            <option value="">请选择词汇类别</option>
+            <option value="CET4">CET4</option>
+            <option value="CET6">CET6</option>
+            <option value="GRE">GRE</option>
+            <option value="TOEFL">TOEFL</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>每日学习词数:</label>
+        <input type="text" class="form-control" id="countofeveryday" placeholder="每日词汇数">
+    </div>
+    
+    <a style="float:right" id="submitsettings" class="submit btn btn-lg btn-primary" role="button">确定 &raquo;</a></br>
+</form>
+{% endblock vocabulaeysettingsform %}

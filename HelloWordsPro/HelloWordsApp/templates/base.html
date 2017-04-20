@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Hello Words</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/htmleaf.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+	
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="container" style="width:800px;">
+
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/index">Hello Words</a>
+          </div>          
+        </div>
+      </nav>
+      <div class="jumbotron" style="padding-left:200px;padding-right:200px;">
+         {% block loginform %}
+         {% endblock loginform %}   
+         {% block vocabulaeysettingsform %}
+         {% endblock vocabulaeysettingsform %}
+         {% block rigisterform %}
+         {% endblock rigisterform %}       
+      </div> 
+    </div>
+    
+  
+    <script src="../../static/js/jquery-3.2.0.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../static/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <script>
+$("#submit").click(function(){
+    
+    var Email = $('#inputEmail').val();
+    var Password = $('#inputPassword').val();
+    if(Email=="" || Password==""){
+        alert("账号或密码不能为空！");
+    }else{
+        var data = {"Email":Email,"Password":Password};
+        $.ajax({
+            "type": "post",
+            "dataType": "json",
+            "url": "/login/",
+            "data": data,
+            "success":function(response){
+                if(response.NickName){
+                    location.href='/index?Nickname='+response.NickName;
+                }else{
+                    alert('账号或密码错误，请重新登陆！');
+                }
+             },
+            "error":function(response){
+                 
+             }
+            
+         });
+    }
+});
+
+$("#rigister").click(function(){
+    
+    var rigisterNickName = $('#rigisterNickName').val();
+    var rigisterPhone = $('#rigisterPhone').val();
+    var rigisterEmail = $('#rigisterEmail').val();
+    var rigisterPassword = $('#rigisterPassword').val();
+    if(rigisterNickName=="" || rigisterEmail=="" || rigisterPhone=="" || rigisterPassword==""){
+        alert("注册信息不能为空！");
+    }else{
+        if(stripscript(rigisterNickName))return false;
+        var data = {
+                    "rigisterNickName":rigisterNickName,
+                    "rigisterPhone":rigisterPhone,
+                    "rigisterEmail":rigisterEmail,
+                    "rigisterPassword":rigisterPassword,
+                   };
+
+        $.ajax({
+            "type": "post",
+            "dataType": "json",
+            "url": "/rigister/",
+            "data": data,
+            "success":function(response){
+                 switch(response.message){
+                     case 'successed':
+                         {
+                             alert('恭喜您，注册HelloWords成功！');
+                             location.href="/login";
+                             break;
+                         }
+                     case 'emailexists':
+                         {
+                             alert('该邮箱已注册！');
+                             break;
+                         }
+                     case 'nicknameexists':
+                         {
+                             alert('该用户名已注册！');
+                             break;
+                         }
+                     case 'phoneexists':
+                         {
+                             alert('该手机号已注册！');
+                             break;
+                         }
+
+                 } 
+             },
+            "error":function(response){
+                 
+             }
+            
+         });
+    }
+});
+
+function getQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+        var r = location.search.substr(1).match(reg); 
+        if (r != null) return unescape(decodeURI(r[2])); return null; 
+    }
+
+$("#submitsettings").click(function(){
+    $("#countofeveryday").keyup(function(){     
+        var tmptxt=$(this).val();     
+        $(this).val(tmptxt.replace(/\D|^0/g,''));     
+    }).bind("paste",function(){     
+        var tmptxt=$(this).val();     
+        $(this).val(tmptxt.replace(/\D|^0/g,''));     
+    }).css("ime-mode", "disabled");
+
+    var CountOfEveryDay = $('#countofeveryday').val();
+    var Category = $('#selectcategory').val();
+    var NickName = getQueryString('NickName');
+    
+    if(CountOfEveryDay=="" || Category==""){
+        alert("输入有误！");
+    }else{
+        var data = {
+                    "Category":Category,
+                    "CountOfEveryDay":CountOfEveryDay,
+                    "NickName":NickName,
+                   };
+        $.ajax({
+            "type": "post",
+            "dataType": "json",
+            "url": "/vocabularysettings/",
+            "data": data,
+            "success":function(response){
+                if(response.status){
+                    location.href='/index?Nickname='+NickName;
+                }else{
+                    
+                }
+             },
+            "error":function(response){
+                 
+             }
+            
+         });
+    }
+});
+
+//过滤特殊字符函数
+function stripscript(s) {
+    if (!s) s = "";
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+    var rs = "";
+    for (var i = 0; i < s.length; i++) {
+        rs = rs + s.substr(i, 1).replace(pattern, '');
+    }
+    if (rs !== s) {
+        alert("输入框中不能包含特殊字符，请重新输入！");
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+</body>
+</html>

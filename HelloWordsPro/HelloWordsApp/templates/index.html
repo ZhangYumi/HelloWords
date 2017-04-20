@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <title>Hello Words</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Font-Awesome-3.2.1/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/flat-ui.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/htmleaf.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+	
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+   <style>
+    .correct{background-color:#13cb13}
+    .fault{background-color:red}
+   </style>
+  </head>
+
+  <body>
+    
+    <div id="wrapper">
+
+        <div class="overlay"></div>
+    
+        <!-- Sidebar -->
+        <nav style="background-color:#eee" class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+             <h4 style="padding-left:140px;">
+                       我的学习笔记
+                    </h4>
+             <ul class="nav nav-tabs">
+              <li><button id="addNoteTab" style="background-color:#eee;color:#34495e;padding-left:17px;padding-right:5px;margin-right:50px;border:none" ><h6>添加笔记</h6></button></li>
+              <li><button id="myNoteTab" style="background-color:#eee;color:#34495e;padding-left:10px;padding-right:5px;margin-right:50px;border:none" ><h6>我的笔记</h6></button></li>
+              <li><button id="sharedNoteTab" style="background-color:#eee;color:#34495e;padding-left:10px;padding-right:5px;margin-right:50px;border:none" ><h6>共享笔记</h6></button></li>
+            </ul>
+            <!--data-bind="html:details"-->
+            <div class="NoteSection" >
+                <div id="addNoteSection">
+                    <label style="font-size:25px;margin-left:10px;">词汇:</label>
+                <input style="width:400px;height:40px;font-size:20pt;" type="text" id="addNoteVocabulary"></input>
+                <label style="font-size:25px;margin-left:10px;">笔记:</label>
+                <textarea id="addNoteContent" style="width:400px;height:500px;"></textarea></br>
+                <input id="isSharedNote" type="checkbox" style="width:20px;height:20px;margin-left:10px;"><span style="font-size:20px;">是否共享笔记</span></input>
+                <button style="float:right;margin-right:30px;" id="addNoteBtn" class="btn btn-lg btn-primary" role="button" onclick="addNoteContent()">添加笔记 &raquo;</button></br>
+                </div>
+
+                <div id="myNoteSection">
+                    <label style="font-size:25px;margin-left:20px;">词汇:</label>
+                    <ul calss="list-group note-list-group " style="margin-left:-20px;margin-right:20px;height:400px;overflow-y:scroll;" data-bind="foreach:myNoteArray">
+                        <li class="list-group-item note-list-item"><h4 class="note" data-bind="text:VocabularyEN"></h4></li>
+                    </ul>
+                    <label style="font-size:25px;margin-left:20px;">笔记:</label></br>
+                    <textarea id="addNoteContent" style="width:450px;height:450px;margin-left:20px;margin-right:20px;"></textarea>
+                </div>
+
+                <div id="sharedNoteSection">
+                    <label style="font-size:25px;margin-left:20px;">共享笔记:</label>
+                    <ul calss="list-group note-share-group" style="margin-left:-20px;margin-right:20px;height:800px;overflow-y:scroll;" data-bind="foreach:sharedNoteArray">
+                        <li class="list-group-item note-share-item">
+                            <span style="font-size:20px;">词汇:<span class="note" data-bind="text:VocabularyEN"></span></span></br>
+                            <span style="font-size:20px;">作者:<span class="note" data-bind="text:NickName"></span></span></br>
+                            <span style="font-size:20px;">笔记:<span class="note" data-bind="text:NoteContent"></span></span>
+                        </li>
+                    </ul>
+                    
+                </div>
+
+            </div>
+        </nav>
+        
+
+<div id="page-content-wrapper">
+      
+      <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+            <span class="hamb-top"></span>
+            <span class="hamb-middle"></span>
+            <span class="hamb-bottom"></span>
+      </button>
+     
+    <div class="container">
+        
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Hello Words</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav nav-tabs navbar-nav">
+    <!--          <li><a href="{% url 'getVocabularyByCategory' Category='CET4' %}">CET4</a></li>
+              <li><a href="{% url 'getVocabularyByCategory' Category='CET6' %}">CET6</a></li>
+              <li><a href="{% url 'getVocabularyByCategory' Category='GRE' %}">GRE</a></li>
+              <li><a href="{% url 'getVocabularyByCategory' Category='TOEFL' %}">TOEFL</a></li>
+              -->
+              <li><a name="CET4" class="VocabularyCategory" role="button">CET4</a></li>
+              <li><a name="CET6" class="VocabularyCategory" role="button">CET6</a></li>
+              <li><a name="GRE" class="VocabularyCategory" role="button">GRE</a></li>
+              <li><a name="TOEFL" class="VocabularyCategory" role="button">TOEFL</a></li> 
+            </ul>
+
+            <li class="dropdown pull-right" style="margin-top:15px;">
+                    <a class="dropdown-toggle" data-toggle="dropdown" style="color:#1abc9c;" href="#">
+                        <i class="fa fa-user fa-fw" style="color:#1abc9c;"></i>  <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user" style="color:#1abc9c;">
+                        <li>
+                            <a id="userInfo" role="button"><i class="fa fa-user fa-fw"></i> 用户信息</a>
+                        </li>
+                        <li>
+                            <a id="vocabularySettings" role="button"><i class="fa fa-gear fa-fw"></i> 学习设置</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a id="loginpage" role="button"><i class="fa fa-sign-out fa-fw"></i> 登录</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+          
+            <!--<button id="loginpage" class="fa fa-user fa-fw" style="margin-right:5px;margin-top:20px;font-size:20px;border:none;float:right"></button>
+            <button id="settings" class="btn btn-sm" style="margin-right:10px;margin-top:20px;float:right"></button>-->
+            <span id="welcomeSign" style="margin-right:10px;margin-top:10px;font-size:20px;float:right"></span>
+            </div>
+          
+        </div>
+      </nav>
+
+      <div class="jumbotron">
+        
+        <h1 class="en"></h1>
+        <div>
+            <h3 style="color:#13cb13;padding-left:850px;font-size:35px;" class="correctnum glyphicon glyphicon-ok"></h3>
+            <h3 style="color:red;padding-left:10px;font-size:35px;" class="faultnum glyphicon glyphicon-remove"></h3>
+            
+        </div>
+        <ul calss="list-group vocabulary-group" style="margin-left:-35px;">
+            <li class="list-group-item vocabuvlary-item"><h4 class="ch"></h4></li>
+            <li class="list-group-item vocabuvlary-item"><h4 class="ch"></h4></li>
+            <li class="list-group-item vocabuvlary-item"><h4 class="ch"></h4></li>
+            <li class="list-group-item vocabuvlary-item"><h4 class="ch"></h4></li>
+        </ul>
+        <p class="ch"></p>
+        <p>"
+          <button id="detailVocabulary" class="btn btn-lg btn-primary showbutton" role="button">词汇详解 &raquo;</button>
+          <button style="float:right" id="nextVocabulary" class="btn btn-lg btn-primary" role="button">下一个 &raquo;</button>
+          <button style="float:right;margin-right:20px;" id="finishStudy" class="btn btn-lg btn-primary" role="button">打卡 &raquo;</button>
+        </p>
+      </div>
+      
+  <div>
+      {% block detailVocabulary %}
+      {% endblock detailVocabulary %}
+      <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+              <span class="sr-only">60% Complete</span>
+          </div>
+      </div>
+      <ul id="showVocabularyDetail">
+          <li>
+          <h4>同义词：</h4><div data-bind="foreach:detailVocabularyArray">
+          <h6><span id="Synonym1" data-bind="text:Synonym"></span><span>: </span>
+          <span id="SynonymCH1" data-bind="text:SynonymCH"></span></h6>
+          </div>
+          </li> 
+           <li>
+          <h4>例句：</h4><div data-bind="foreach:detailVocabularyArray">
+          <h6 id="Synonym1" data-bind="text:ExampleSentences"></h6>
+          <h6 id="SynonymCH1" data-bind="text:ExampleSentencesCH"></h6>
+          </div>
+          </li> 
+          
+      </ul>
+   </div> 
+   
+</div>
+</div>
+ 
+    <script src="../../static/js/jquery-3.2.0.min.js"></script>
+    <script src="../../static/js/knockout-3.4.2.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../static/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+
+<script>
+    /**************Global Variables****************/
+    var VocabularyIndex = 0;
+    var CorrectOptionIndex = 0;
+    var CorrectChoosingNum = 0;
+    var FaultChoosingNum = 0;
+    var increase = -1;                     //初始时单词索引为0，所以标志参数设为-1
+    var NickName;
+    var VocabularyArray = {{ Vocabulary | safe }};
+    /**********************************************/
+
+
+    /*****************Knockout*********************/
+    var myModel={
+        detailVocabularyArray : [],
+        myNoteArray: [],
+        sharedNoteArray: [],
+    };
+
+    var viewModel={
+        detailVocabularyArray : ko.observableArray(),
+        myNoteArray : ko.observableArray(),
+        sharedNoteArray: ko.observableArray(),
+        
+    };
+    /**********************************************/
+
+
+    $("#nextVocabulary").click(function(){
+        $(".vocabuvlary-item").removeClass("correct").removeClass("fault");
+        var increase = VocabularyIndex;                           //单词索引增加时，标志参数保存上一个单词索引
+        VocabularyIndex++;
+        RandomOptions(VocabularyIndex);
+        ChooseCorrectOption(increase);
+        
+    });
+   
+    $("#finishStudy").click(function(){
+        var currentVocabulary = VocabularyArray[VocabularyIndex].fields.VocabularyEN;
+        var category = VocabularyArray[VocabularyIndex].fields.Category;
+        var sum = FaultChoosingNum+CorrectChoosingNum;
+        var data = {'currentVocabulary':currentVocabulary,'category':category,'nickname':NickName};
+        var requestUrl = "/updateReciteRecords/";
+        //alert(data);
+        requestDataByAjaxGet(requestUrl,data,function(response){
+            switch(response.status){
+                case 'create':
+                case 'update':
+                {  
+                    var str = '恭喜您打卡成功！您今日学习'+category+'单词共'+sum+'个，其中正确'+CorrectChoosingNum+'个，错误'+FaultChoosingNum+'个，继续加油哦！';
+                    alert(str);
+                    break;
+                }
+                case 'error':
+                    break;
+            }
+        });
+    });
+
+    $("#detailVocabulary").click(function(){
+        //var VocabularyArray = {{ Vocabulary | safe }};
+        var currentVocabulary = VocabularyArray[VocabularyIndex].fields.VocabularyEN;
+        var category = VocabularyArray[VocabularyIndex].fields.Category;
+        var data = {'currentVocabulary':currentVocabulary,};
+        var requestUrl = "/detailVocabulary/";
+        requestDataByAjaxGet(requestUrl,data,function(response){
+            var responseArray = response['message'].split('}}');   
+  
+            var detailVocabularyArrayTemp = []
+            $.each(responseArray,function(i,v){
+                if(v){
+                    var row = JSON.parse((v + "}}").replace(/^,|,$/g,'')).fields;
+                    detailVocabularyArrayTemp.push(row);
+                }                
+            });            
+            myModel.detailVocabularyArray = detailVocabularyArrayTemp;
+            viewModel.detailVocabularyArray(myModel.detailVocabularyArray);
+            $("#showVocabularyDetail").show();     
+          });
+       }); 
+ 
+
+
+
+    function requestDataByAjaxGet(url,data,callback){ 
+        $.ajax({
+        "url": url,
+        "type": "get",
+        "headers": {'Content-Type': 'application/json',},
+        "data": data,
+        "dataType":"json",
+        "success":function(response){
+            
+            callback(response);
+        },
+        "error":function(response){
+          
+        }
+        });  
+    }
+    
+    function requestDataByAjaxPost(url,data,callback){ 
+        $.ajax({
+        "url": url,
+        "type": "post",
+        "headers": {'Content-Type': 'application/json',},
+        "data": data,
+        "dataType":"json",
+        "success":function(response){
+            
+            callback(response);
+        },
+        "error":function(response){
+          
+        }
+        });  
+    }
+
+    function RandomOptions(VocabularyIndex){
+        $("#showVocabularyDetail").hide();  
+        $("#addNoteSection").show();  
+        $("#myNoteSection").hide();  
+        $("#sharedNoteSection").hide();
+        //$("#showVocabularyDetail").hide();  
+         
+        //VocabularyArray = {{ Vocabulary | safe }};
+        var len = VocabularyArray.length;
+        var VocabularyEN = VocabularyArray[VocabularyIndex].fields.VocabularyEN;
+        
+        var VocabularyCH = VocabularyArray[VocabularyIndex].fields.VocabularyCH;
+       
+        var currentVocabulary = VocabularyEN;
+        CorrectOptionIndex = Math.floor(Math.random()*4);
+
+        $(".vocabuvlary-item > .ch").eq(CorrectOptionIndex).text(VocabularyCH);
+        
+
+        var OtherOptions;
+        for(var i=0;i<=3;i++){
+            OtherOptions=VocabularyArray[Math.floor(Math.random()*len)].fields.VocabularyCH;
+            if(i !== CorrectOptionIndex){
+             
+                $(".vocabuvlary-item > .ch").eq(i).text(OtherOptions);
+            }
+        }        
+        
+        
+        $('.jumbotron .en').text(VocabularyEN);
+               
+    }
+
+    function ChooseCorrectOption(increase) {
+   
+        $(".vocabuvlary-item").unbind("click").click(function(){       //绑定click事件前用unbind解除上次绑定，避免重复绑定
+            if($(this).index()!=-1 && increase < VocabularyIndex){    //答案选定且标志参数小于当前单词的索引
+                
+                if($(this).index()==CorrectOptionIndex){
+                    $(this).addClass("correct");
+                    $(this).siblings(".vocabuvlary-item").removeClass("correct");
+                    CorrectChoosingNum = CorrectChoosingNum+1;
+                    $(".correctnum").text(CorrectChoosingNum);
+        
+        
+                }
+                else{
+                    $(this).addClass("fault");
+                    $(this).siblings(".vocabuvlary-item").removeClass("fault");
+                    $(".vocabuvlary-item").each(function(){
+                        if($(this).index()==CorrectOptionIndex){
+                            $(this).addClass("correct");
+                        }
+                    });
+                    FaultChoosingNum = FaultChoosingNum+1;
+                    $(".faultnum").text(FaultChoosingNum);
+                }
+
+                increase++;                   //每个单词选完一个答案后标志参数加1，避免同一单词选择多次
+                $(".progress-bar").width((increase+1)+"%");        //每完成一个单词，进度条更新
+            }
+
+            
+           
+        });
+               
+    }
+
+    $('#loginpage').click(function(){
+        location.href="/login";
+    });
+
+    $('#vocabularySettings').click(function(){
+        location.href="/vocabularysettings/?NickName="+NickName;
+
+    });
+
+    $('#addNoteTab').click(function(){
+
+        $("#myNoteSection").hide();
+        $("#sharedNoteSection").hide();  
+        $("#addNoteSection").show();
+      
+
+        });
+
+    $('#myNoteTab').click(function(){
+
+         refreshMyNote();
+         $("#addNoteSection").hide();
+         $("#sharedNoteSection").hide();  
+         $("#myNoteSection").show();  
+        
+        
+    });
+    
+    $('#sharedNoteTab').click(function(){
+
+         refreshSharedNote();
+         $("#addNoteSection").hide();
+         $("#myNoteSection").hide();
+         $("#sharedNoteSection").show();  
+           
+        
+        
+    });
+
+    function refreshMyNote(){
+        if(NickName){           
+            var data = {
+                 
+                 'NickName':NickName,
+             };        
+
+            var requestUrl = "/getMyNote/";
+            requestDataByAjaxGet(requestUrl,data,function(response){
+                var responseArray = response['MyNote'].split('}}');   
+                var myNoteArrayTemp = [];
+                $.each(responseArray,function(i,v){
+                if(v){
+                    var row = JSON.parse((v + "}}").replace(/^,|,$/g,'')).fields;
+                    myNoteArrayTemp.push(row);
+                }                
+            });            
+            myModel.myNoteArray = myNoteArrayTemp;
+            viewModel.myNoteArray(myModel.myNoteArray);
+            });
+         }     
+
+    };
+     
+    function refreshSharedNote(){
+        if(NickName){          
+            var currentVocabulary = VocabularyArray[VocabularyIndex].fields.VocabularyEN; 
+            var data = {
+                 
+                 'VocabularyEN':currentVocabulary,
+             };        
+            var requestUrl = "/getSharedNote/";
+            requestDataByAjaxGet(requestUrl,data,function(response){
+                var responseArray = response['SharedNote'].split('}}');   
+                var sharedNoteArrayTemp = [];
+                $.each(responseArray,function(i,v){
+                if(v){
+                    var row = JSON.parse((v + "}}").replace(/^,|,$/g,'')).fields;
+                    sharedNoteArrayTemp.push(row);
+                }                
+            });            
+            myModel.sharedNoteArray = sharedNoteArrayTemp;
+            viewModel.sharedNoteArray(myModel.sharedNoteArray);
+            });
+         }     
+
+    };
+         
+      function addNoteContent(){
+         if(!NickName){
+                alert('你当前还没有登陆，请先登录！');
+         }else{
+        //var NickName = getQueryString('NickName');
+
+            var addNoteVocabulary = $('#addNoteVocabulary').val();
+            var addNoteContent = $('#addNoteContent').val();
+            var isSharedNote = $("#isSharedNote").prop('checked')?'1':'0';
+            //alert(addNoteVocabulary); 
+            if(addNoteVocabulary&&addNoteContent){           
+                var data = {
+                     'addNoteVocabulary':addNoteVocabulary,
+                     'addNoteContent':addNoteContent,
+                     'isSharedNote':isSharedNote,
+                     'NickName':NickName
+                };        
+                var requestUrl = "/addNote/";
+                requestDataByAjaxGet(requestUrl,data,function(response){
+                    alert("添加笔记成功！")
+                });
+             }     
+        }
+    }
+
+
+    $('.VocabularyCategory').click(function(){
+        var Category =$(this).attr('name');
+        if(!NickName){
+            alert('你当前还没有登陆，请先登录！');
+        }else{
+            var url = '/getVocabularyByCategoryAndRecords/';
+            data = {
+                Category:Category,
+                NickName:NickName
+            }
+
+            requestDataByAjaxGet(url,data,function(response){
+
+              var responseArray = response['Vocabulary'].split('}}');   
+                 var vocabularyArrayTemp = []
+                 $.each(responseArray,function(i,v){
+                 if(v){
+                    var row = JSON.parse((v + "}}").replace(/^,|,$/g,''));
+                    vocabularyArrayTemp.push(row);
+                 }
+   
+                 VocabularyArray = vocabularyArrayTemp;
+                 VocabularyIndex = 0;
+                 CorrectOptionIndex = 0;
+                 CorrectChoosingNum = 0;
+                 FaultChoosingNum = 0;  
+                 $(".correctnum").text(CorrectChoosingNum);
+                 $(".faultnum").text(FaultChoosingNum);
+                 $(".vocabuvlary-item").removeClass("correct").removeClass("fault");
+                 RandomOptions(VocabularyIndex);     
+                 ChooseCorrectOption(increase);
+                 $(".progress-bar").width((increase+1)+"%");
+            });  
+
+            });
+        
+        }
+        
+    });    
+    function getQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+        var r = location.search.substr(1).match(reg); 
+        if (r != null) return unescape(decodeURI(r[2])); return null; 
+    }
+
+    
+    $(function(){
+       NickName = getQueryString('NickName');
+       var trigger = $('.hamburger'),
+		      overlay = $('.overlay'),
+		     isClosed = false;
+
+		    trigger.click(function () {
+		      hamburger_cross();      
+		    });
+
+		    function hamburger_cross() {
+
+		      if (isClosed == true) {          
+		        overlay.hide();
+		        trigger.removeClass('is-open');
+		        trigger.addClass('is-closed');
+		        isClosed = false;
+		      } else {   
+		        overlay.show();
+		        trigger.removeClass('is-closed');
+		        trigger.addClass('is-open');
+		        isClosed = true;
+		      }
+		  }
+		  
+		  $('[data-toggle="offcanvas"]').click(function () {
+		        $('#wrapper').toggleClass('toggled');
+		  });  
+		
+       
+       $(".correctnum").text(CorrectChoosingNum);
+       $(".faultnum").text(FaultChoosingNum);
+   
+        RandomOptions(VocabularyIndex);
+        ChooseCorrectOption(increase);
+        ko.applyBindings(viewModel);
+
+        if(!NickName){
+           $('#detailVocabulary').attr('disabled','true');
+           $('#nextVocabulary').attr('disabled','true');
+           $('#finishStudy').attr('disabled','true');
+           alert('你当前还没有登陆，请先登录！');
+               
+       }else{
+           $('#welcomeSign').text('欢迎您，'+NickName+'!  ');
+           $('#loginpage').text('退出');
+       }
+       
+    });
+
+
+</script>
+</html>
