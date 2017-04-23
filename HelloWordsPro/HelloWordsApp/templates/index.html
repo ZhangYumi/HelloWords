@@ -71,10 +71,13 @@
                 <div id="myNoteSection">
                     <label style="font-size:25px;margin-left:20px;">词汇:</label>
                     <ul calss="list-group note-list-group " style="margin-left:-20px;margin-right:20px;height:400px;overflow-y:scroll;" data-bind="foreach:myNoteArray">
-                        <li class="list-group-item note-list-item"><h4 class="note" data-bind="text:VocabularyEN"></h4></li>
+			    <li class="list-group-item note-list-item" onclick="detailMyNoteContent(this)">
+                                <h4 class="note" data-bind="text:VocabularyEN"></h4>
+                                <input type="text" class="vocabularyNoteContent" data-bind="value:NoteContent" style="display:none" />
+                            </li>
                     </ul>
                     <label style="font-size:25px;margin-left:20px;">笔记:</label></br>
-                    <textarea id="addNoteContent" style="width:450px;height:450px;margin-left:20px;margin-right:20px;"></textarea>
+                    <textarea id="myNoteContent" style="width:450px;height:450px;margin-left:20px;margin-right:20px;"></textarea>
                 </div>
 
                 <div id="sharedNoteSection">
@@ -170,7 +173,7 @@
         </ul>
         <p class="ch"></p>
         <p>"
-          <button id="detailVocabulary" class="btn btn-lg btn-primary showbutton" role="button">词汇详解 &raquo;</button>
+          <button id="detailVocabulary" name="hide" class="btn btn-lg btn-primary showbutton" role="button">展开词汇详解 &raquo;</button>
           <button style="float:right" id="nextVocabulary" class="btn btn-lg btn-primary" role="button">下一个 &raquo;</button>
           <button style="float:right;margin-right:20px;" id="finishStudy" class="btn btn-lg btn-primary" role="button">打卡 &raquo;</button>
         </p>
@@ -289,7 +292,18 @@
             });            
             myModel.detailVocabularyArray = detailVocabularyArrayTemp;
             viewModel.detailVocabularyArray(myModel.detailVocabularyArray);
-            $("#showVocabularyDetail").show();     
+            if($('#detailVocabulary').attr('name')== 'hide'){
+                $("#showVocabularyDetail").show();
+                $('#detailVocabulary').text('隐藏词汇详解');
+                $('#detailVocabulary').attr('name','show');
+                
+            }else{
+                $("#showVocabularyDetail").hide();
+                $('#detailVocabulary').text('展开词汇详解');
+                $('#detailVocabulary').attr('name','hide');
+                
+            }
+                 
           });
        }); 
  
@@ -460,7 +474,7 @@
          }     
 
     };
-     
+    
     function refreshSharedNote(){
         if(NickName){          
             var currentVocabulary = VocabularyArray[VocabularyIndex].fields.VocabularyEN; 
@@ -510,6 +524,15 @@
         }
     }
 
+
+    function detailMyNoteContent(thisNote){
+        $(thisNote).addClass('correct');
+	$(thisNote).siblings('.note-list-item').removeClass('correct');  
+        var noteContent = $(thisNote).children("input").val();
+        $('#myNoteContent').text(noteContent);
+    
+    }
+ 
 
     $('.VocabularyCategory').click(function(){
         var Category =$(this).attr('name');
