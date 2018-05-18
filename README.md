@@ -60,9 +60,7 @@ HelloWords为使用者提供了灵活的笔记功能。使用者可以在学习�
 ![](http://i.imgur.com/uRlB0Cz.png)
 ![](http://i.imgur.com/SZ8ldw7.png)
 
-### 附：用户相关
----
-
+### 用户相关
 用户在未登陆情况下，无法使用HelloWords的单词学习功能，系统会禁用部分功能，比如“**词汇扩展**”、点击下一个单词等，并提示用户登陆。
 ![](http://i.imgur.com/JZXsT3y.png)
 用户点开界面右上角“**用户图标**”，选择“**登陆**”，可以返回到登录界面进行登陆（如果已登录该按钮会变为“**退出**”）。
@@ -71,6 +69,5 @@ HelloWords为使用者提供了灵活的笔记功能。使用者可以在学习�
 ![](http://i.imgur.com/fiiiHE8.png)
 如果当前没有注册HelloWords账号，可从登录界面跳转到注册界面进行账号注册，注册成功后会有成功提醒。
 ![](http://i.imgur.com/iGnneLp.png)
----
 
 ### 结语：欢迎大家使用HelloWords，祝大家学习愉快，谢谢！
