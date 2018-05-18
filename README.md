@@ -61,6 +61,7 @@ HelloWords为使用者提供了灵活的笔记功能。使用者可以在学习�
 ![](http://i.imgur.com/SZ8ldw7.png)
 
 ### 附：用户相关
+---
 
 用户在未登陆情况下，无法使用HelloWords的单词学习功能，系统会禁用部分功能，比如“**词汇扩展**”、点击下一个单词等，并提示用户登陆。
 ![](http://i.imgur.com/JZXsT3y.png)
